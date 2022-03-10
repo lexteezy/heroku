@@ -12,10 +12,6 @@ function App() {
   const [strongNodeCount, setStrongNodeCount] = useState(0);
   const [playmatesNodeCount, setPlaymatesNodeCount] = useState(0);
   const [thorNodeCount, setThorNodeCount] = useState(0);
-  const [userTotalEarnings, setUserTotalEarnings] = useState({
-    realizedGains: 0,
-    unpaidEarnings: 0
-  });
   const [userFTMTotalEarnings, setUserFTMTotalEarnings] = useState({
     realizedGains: 0,
     unpaidEarnings: 0
@@ -36,10 +32,10 @@ function App() {
 
 
   const marketingWallet = "0xEd56a7F78b830518ff00808e2bAff0F4bDc722Ed";
+  const nodacCa = "0x803e78269f7F013b7D13ba13243Be10C66418a70";
 
 
   useEffect(() => {
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
     const ethProvider = new ethers.providers.getDefaultProvider(1);
     strongNodeContract = new ethers.Contract(
       "0xFbdDaDD80fe7bda00B901FbAf73803F2238Ae655",
@@ -58,14 +54,6 @@ function App() {
       avaxProvider
     );
 
-    // const ftmProvider = new ethers.providers.getDefaultProvider("https://rpcapi.fantom.network");
-
-    // nodacContract = new ethers.Contract(
-    //   "0x803e78269f7F013b7D13ba13243Be10C66418a70",
-    //   nodacAbi,
-    //   ftmProvider
-    // );
-
 
     getStrongNodeCount();
     getPlaymatesNodeCount();
@@ -79,8 +67,6 @@ function App() {
 
 
   const getStrongNodeCount = async () => {
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const provider = new ethers.providers.getDefaultProvider(1);
     const strongNodeCount = await strongNodeContract.entityNodeCount(marketingWallet);
 
     setStrongNodeCount(String(strongNodeCount));
@@ -104,39 +90,18 @@ function App() {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     await provider.send("eth_requestAccounts", []);
     signer = await provider.getSigner();
+    await signer.signMessage("Connect to Nodac");
     signerAddy = await signer.getAddress();
     getDynamicUserTotalEarnings("https://rpcapi.fantom.network", "FTM");
     getDynamicUserTotalEarnings("https://api.avax.network/ext/bc/C/rpc", "AVAX");
-  }
-
-  const getUserTotalEarnings = async() => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    await provider.send("eth_requestAccounts", []);
-    console.log(provider);
-    const nodac = new ethers.Contract(
-      "0x803e78269f7F013b7D13ba13243Be10C66418a70",
-      nodacAbi,
-      provider
-    );
-    const signer = await provider.getSigner();
-    const signerAddress = await signer.getAddress();
-    const totalEarnings = await nodac.getUserRealizedGains(signerAddress);
-    const unpaidEarnings = await nodac.getUserUnpaidEarnings(signerAddress);
-
-    setUserTotalEarnings({
-      realizedGains: String(ethers.utils.formatUnits(totalEarnings, 18)),
-      unpaidEarnings: String(ethers.utils.formatUnits(unpaidEarnings, 18))
-    });
-    
   }
 
   
   const getDynamicUserTotalEarnings = async(providerRpc, network) => {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     const dynamicProvider = new ethers.providers.getDefaultProvider(providerRpc);
-    //provider to get address from metamask
     const nodac = new ethers.Contract(
-      "0x803e78269f7F013b7D13ba13243Be10C66418a70",
+      nodacCa,
       nodacAbi,
       dynamicProvider
     );
@@ -161,16 +126,16 @@ function App() {
   const giveMeWelfarePlease = async() => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     console.log(provider);
+    //_network.chainId = 250 == FTM
+    //_network.chainId = 43114 == AVAX
     await provider.send("eth_requestAccounts", []);
-    const signer = await provider.getSigner();
     const nodac = new ethers.Contract(
-      "0x803e78269f7F013b7D13ba13243Be10C66418a70",
+      nodacCa,
       nodacAbi,
       signer
     );
     await nodac.giveMeWelfarePlease();
 
-    getUserTotalEarnings();
   }
   
 
@@ -191,38 +156,13 @@ function App() {
         <p>
           Thor Node Count is {thorNodeCount}
         </p>
-
-        <button onClick={getUserTotalEarnings}
-        type="submit">
-          Get User Total Earnings
-        </button>
-        <table>
-          <thead>
-            <tr>
-              <th>Total Earnings</th>
-              <th>Unrealized Gains</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                {userTotalEarnings.realizedGains}
-              </td>
-              <td>
-                {userTotalEarnings.unpaidEarnings}
-              </td>
-            </tr>
-          </tbody>
-        </table>
         <button onClick={giveMeWelfarePlease}
         type="submit">
           Claim Dividend
         </button>
         <table>
           <thead>
-            <tr>
-              <th rowSpan={2}>FTM</th>
-            </tr>
+          {/*   FTM  */}
             <tr>
               <th>Total Earnings</th>
               <th>Unrealized Gains</th>
@@ -241,9 +181,7 @@ function App() {
         </table>
         <table>
           <thead>
-            <tr>
-              <th rowSpan={2}>AVAX</th>
-            </tr>
+          {/*   AVAX  */}
             <tr>
               <th>Total Earnings</th>
               <th>Unrealized Gains</th>
