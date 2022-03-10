@@ -221,6 +221,9 @@ function App() {
         <table>
           <thead>
             <tr>
+              <th rowSpan={2}>FTM</th>
+            </tr>
+            <tr>
               <th>Total Earnings</th>
               <th>Unrealized Gains</th>
             </tr>
@@ -238,6 +241,9 @@ function App() {
         </table>
         <table>
           <thead>
+            <tr>
+              <th rowSpan={2}>AVAX</th>
+            </tr>
             <tr>
               <th>Total Earnings</th>
               <th>Unrealized Gains</th>
