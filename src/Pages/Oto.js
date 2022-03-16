@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { ethers } from 'ethers';
 
+//http://localhost:3000/oto
 /* TODO: NEED TO FIX SOME RACE CONDITIONS BETWEEN PROMISES TO ACHIEVE EXPECTED/CONSISTENT OUTPUTS */
 function Oto() {
 
