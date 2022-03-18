@@ -163,16 +163,23 @@ class OtoClassBased extends React.Component {
 	}
 
 	handleCalculateChange(event) {
-        let value = event.target.value;
+		let value = event.target.value;
 		this.setState({ value: event.target.value });
 		const rebaseTimesPerDay = 96;
-		const rebaseRate = 0.02362 / 100;
-		let amountOfToken = 10;
-        for(var i=0; i<rebaseTimesPerDay * value; i++) {
-            amountOfToken += amountOfToken * rebaseRate;
-            // console.log('amountOfToken', amountOfToken);
-        }
+		const rebaseRate = 0.02355 / 100; // 0.02355 or 0.02362 depende kay boss KEK
+		let amountOfToken = this.calculateCompoundingRate(
+			1,
+			rebaseTimesPerDay * value,
+			rebaseRate
+		);
 		this.setState({ result: amountOfToken });
+	}
+
+	calculateCompoundingRate(amount, rebaseTimes, rate) {
+		for (var i = 0; i < rebaseTimes; i++) {
+			amount += (amount * rate);
+		}
+		return amount;
 	}
 
 	componentDidMount() {
@@ -217,12 +224,12 @@ class OtoClassBased extends React.Component {
 					desc={this.state.taxReceiverBalances.vault}
 				/>
 				<CardDetail result={this.state.result} days={this.state.value}>
-					<div class="ui input focus">
+					<div className="ui input focus">
 						<input
 							type="number"
 							value={this.state.value}
 							onChange={this.handleCalculateChange}
-                            placeholder="Days"
+							placeholder="Days"
 						/>
 					</div>
 				</CardDetail>
