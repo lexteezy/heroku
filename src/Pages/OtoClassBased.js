@@ -41,7 +41,7 @@ class OtoClassBased extends React.Component {
 			otoContract: otoContract,
 			wavaxContract: wavaxContract,
 			tokenDecimal: 5,
-			otoPrice: null,
+			otoPrice: 0,
 			tokenSupply: {
 				totalSupply: 0,
 				circulatingSupply: 0,
@@ -68,11 +68,23 @@ class OtoClassBased extends React.Component {
 		let tokenBalance;
 		this.state.wavaxContract.balanceOf(this.state.lpPair).then((res) => {
 			avaxBalance = ethers.utils.formatUnits(res, 18);
-			this.setState({ lpBalance: { avax: avaxBalance } });
+			this.setState((prevState) => ({
+				lpBalance: {
+					...prevState.lpBalance,
+					avax: avaxBalance,
+				},
+			}));
+            this.getTokenPrice();
 		});
 		this.state.otoContract.balanceOf(this.state.lpPair).then((res) => {
 			tokenBalance = this.tokenFormatEther(res);
-			this.setState({ lpBalance: { token: tokenBalance } });
+			this.setState((prevState) => ({
+				lpBalance: {
+					...prevState.lpBalance,
+					token: tokenBalance,
+				},
+			}));
+            this.getTokenPrice();
 		});
 	}
 
