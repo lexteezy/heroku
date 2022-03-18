@@ -74,7 +74,6 @@ class OtoClassBased extends React.Component {
 					avax: avaxBalance,
 				},
 			}));
-            this.getTokenPrice();
 		});
 		this.state.otoContract.balanceOf(this.state.lpPair).then((res) => {
 			tokenBalance = this.tokenFormatEther(res);
@@ -84,7 +83,6 @@ class OtoClassBased extends React.Component {
 					token: tokenBalance,
 				},
 			}));
-            this.getTokenPrice();
 		});
 	}
 
@@ -96,17 +94,32 @@ class OtoClassBased extends React.Component {
 			.balanceOf(this.state.firepitAddress)
 			.then((res) => {
 				firepitBalance = this.tokenFormatEther(res);
-				this.setState({ taxReceiverBalances: { firepit: firepitBalance } });
+				this.setState((prevState) => ({
+					taxReceiverBalances: {
+						...prevState.taxReceiverBalances,
+						firepit: firepitBalance,
+					},
+				}));
 			});
 		this.state.wavaxContract.balanceOf(this.state.vaultAddress).then((res) => {
 			vaultBalance = this.tokenFormatEther(res);
-			this.setState({ taxReceiverBalances: { vault: vaultBalance } });
+			this.setState((prevState) => ({
+				taxReceiverBalances: {
+					...prevState.taxReceiverBalances,
+					vault: vaultBalance,
+				},
+			}));
 		});
 		this.state.wavaxContract
 			.balanceOf(this.state.treasuryAddress)
 			.then((res) => {
 				treasuryBalance = this.tokenFormatEther(res);
-				this.setState({ taxReceiverBalances: { treasury: treasuryBalance } });
+				this.setState((prevState) => ({
+					taxReceiverBalances: {
+						...prevState.taxReceiverBalances,
+						treasury: treasuryBalance,
+					},
+				}));
 			});
 	}
 
