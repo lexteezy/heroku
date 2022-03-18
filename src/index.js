@@ -1,17 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import logo from "./logo.svg";
+import strongNodeAbi from "./strongNodeAbi.json";
+import playmateNodeAbi from "./playmateNodeAbi.json";
+import thorNodeAbi from "./thorNodeAbi.json";
+import nodacAbi from "./nodacAbi.json";
+import wavaxAbi from "./wavaxAbi.json";
+import { ethers } from "ethers";
+import { useState, useEffect } from "react";
+import Axios from "axios";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Oto from "./Pages/Oto";
+// import Base from "./Pages/Base";
+import OtoClassBased from "./Pages/OtoClassBased";
+import NavigationBar from "./NavigationBar";
+import Home from "./Pages/Home";
+import ReactDOM from "react-dom";
+import React from "react";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const App = () => {
+	return (
+		<>
+			<Router>
+        <NavigationBar/>
+				<Routes>
+					<Route path="/" exact element={<Home />} />
+					<Route path="/oto" element={<Oto />} />
+					<Route path="/otoclass" element={<OtoClassBased />} />
+				</Routes>
+			</Router>
+		</>
+	);
+};
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(<App />, document.getElementById("root"));

@@ -1,6 +1,18 @@
 import React from "react";
 
 const CardDetail = (props) => {
+	if(props.children) {
+		return ( 
+			<div className="card">
+				<div className="content">
+					{props.children}
+					<div className="meta">
+						{props.result}
+					</div>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="card">
 			<div className="content">

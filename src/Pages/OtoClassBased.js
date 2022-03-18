@@ -42,6 +42,8 @@ class OtoClassBased extends React.Component {
 			wavaxContract: wavaxContract,
 			tokenDecimal: 5,
 			otoPrice: 0,
+			value: 0,
+			result: 0,
 			tokenSupply: {
 				totalSupply: 0,
 				circulatingSupply: 0,
@@ -57,6 +59,8 @@ class OtoClassBased extends React.Component {
 				token: null,
 			},
 		};
+
+		this.handleCalculateChange = this.handleCalculateChange.bind(this);
 	}
 
 	tokenFormatEther(value) {
@@ -90,17 +94,15 @@ class OtoClassBased extends React.Component {
 		let firepitBalance;
 		let vaultBalance;
 		let treasuryBalance;
-		this.state.otoContract
-			.balanceOf(this.state.firepitAddress)
-			.then((res) => {
-				firepitBalance = this.tokenFormatEther(res);
-				this.setState((prevState) => ({
-					taxReceiverBalances: {
-						...prevState.taxReceiverBalances,
-						firepit: firepitBalance,
-					},
-				}));
-			});
+		this.state.otoContract.balanceOf(this.state.firepitAddress).then((res) => {
+			firepitBalance = this.tokenFormatEther(res);
+			this.setState((prevState) => ({
+				taxReceiverBalances: {
+					...prevState.taxReceiverBalances,
+					firepit: firepitBalance,
+				},
+			}));
+		});
 		this.state.otoContract.balanceOf(this.state.vaultAddress).then((res) => {
 			vaultBalance = this.tokenFormatEther(res);
 			this.setState((prevState) => ({
@@ -110,17 +112,15 @@ class OtoClassBased extends React.Component {
 				},
 			}));
 		});
-		this.state.otoContract
-			.balanceOf(this.state.treasuryAddress)
-			.then((res) => {
-				treasuryBalance = this.tokenFormatEther(res);
-				this.setState((prevState) => ({
-					taxReceiverBalances: {
-						...prevState.taxReceiverBalances,
-						treasury: treasuryBalance,
-					},
-				}));
-			});
+		this.state.otoContract.balanceOf(this.state.treasuryAddress).then((res) => {
+			treasuryBalance = this.tokenFormatEther(res);
+			this.setState((prevState) => ({
+				taxReceiverBalances: {
+					...prevState.taxReceiverBalances,
+					treasury: treasuryBalance,
+				},
+			}));
+		});
 	}
 
 	getTokenPrice() {
@@ -162,6 +162,19 @@ class OtoClassBased extends React.Component {
 		}
 	}
 
+	handleCalculateChange(event) {
+        let value = event.target.value;
+		this.setState({ value: event.target.value });
+		const rebaseTimesPerDay = 96;
+		const rebaseRate = 0.02362 / 100;
+		let amountOfToken = 10;
+        for(var i=0; i<rebaseTimesPerDay * value; i++) {
+            amountOfToken += amountOfToken * rebaseRate;
+            // console.log('amountOfToken', amountOfToken);
+        }
+		this.setState({ result: amountOfToken });
+	}
+
 	componentDidMount() {
 		Axios.get("https://api.coinstats.app/public/v1/coins/avalanche-2").then(
 			(response) => {
@@ -171,7 +184,7 @@ class OtoClassBased extends React.Component {
 		this.getLPBalance();
 		this.getTotalSupply();
 		this.getTaxReceiverBalances();
-		this.getTokenPrice();
+		// this.getTokenPrice();
 	}
 
 	render() {
@@ -203,6 +216,16 @@ class OtoClassBased extends React.Component {
 					header="Vault Balance"
 					desc={this.state.taxReceiverBalances.vault}
 				/>
+				<CardDetail result={this.state.result} days={this.state.value}>
+					<div class="ui input focus">
+						<input
+							type="number"
+							value={this.state.value}
+							onChange={this.handleCalculateChange}
+                            placeholder="Days"
+						/>
+					</div>
+				</CardDetail>
 			</div>
 		);
 	}
