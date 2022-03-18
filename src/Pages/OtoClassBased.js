@@ -90,7 +90,7 @@ class OtoClassBased extends React.Component {
 		let firepitBalance;
 		let vaultBalance;
 		let treasuryBalance;
-		this.state.wavaxContract
+		this.state.otoContract
 			.balanceOf(this.state.firepitAddress)
 			.then((res) => {
 				firepitBalance = this.tokenFormatEther(res);
@@ -101,7 +101,7 @@ class OtoClassBased extends React.Component {
 					},
 				}));
 			});
-		this.state.wavaxContract.balanceOf(this.state.vaultAddress).then((res) => {
+		this.state.otoContract.balanceOf(this.state.vaultAddress).then((res) => {
 			vaultBalance = this.tokenFormatEther(res);
 			this.setState((prevState) => ({
 				taxReceiverBalances: {
@@ -110,7 +110,7 @@ class OtoClassBased extends React.Component {
 				},
 			}));
 		});
-		this.state.wavaxContract
+		this.state.otoContract
 			.balanceOf(this.state.treasuryAddress)
 			.then((res) => {
 				treasuryBalance = this.tokenFormatEther(res);
@@ -190,6 +190,18 @@ class OtoClassBased extends React.Component {
 				<CardDetail
 					header="Firepit Percentage"
 					desc={this.state.tokenSupply.firepitPercentage}
+				/>
+				<CardDetail
+					header="Firepit Balance"
+					desc={this.state.taxReceiverBalances.firepit}
+				/>
+				<CardDetail
+					header="Treasury Balance"
+					desc={this.state.taxReceiverBalances.treasury}
+				/>
+				<CardDetail
+					header="Vault Balance"
+					desc={this.state.taxReceiverBalances.vault}
 				/>
 			</div>
 		);
