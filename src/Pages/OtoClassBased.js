@@ -163,13 +163,14 @@ class OtoClassBased extends React.Component {
 	}
 
 	handleCalculateChange(event) {
-		let value = event.target.value;
-		this.setState({ value: event.target.value });
+		let days = event.target.value;
+		this.setState({ value: days });
 		const rebaseTimesPerDay = 96;
 		const rebaseRate = 0.02355 / 100; // 0.02355 or 0.02362 depende kay boss KEK
+		const tokenAmount = 1;
 		let amountOfToken = this.calculateCompoundingRate(
-			1,
-			rebaseTimesPerDay * value,
+			tokenAmount,
+			rebaseTimesPerDay * days,
 			rebaseRate
 		);
 		this.setState({ result: amountOfToken });
