@@ -14,6 +14,9 @@ const NavigationBar = () => {
 				<li>
 					<Link to="/otoclass">OTO Class Based</Link>
 				</li>
+				<li>
+					<Link to="/content">Content</Link>
+				</li>
 			</ul>
 		</div>
 	);

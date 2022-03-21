@@ -1,0 +1,27 @@
+.header {
+	font-weight: bold;
+	font-size: 40px;
+	color: white;
+}
+
+.description {
+	font-weight: normal;
+	font-size: 20px;
+	color: white;
+}
+
+.imageright {
+	padding-top: 25px;
+	display: flex;
+	align-items: flex-end;
+}
+
+.container-padding {
+	padding: 200px 200px 200px 200px;
+}
+
+.profile {
+	object-fit: fill;
+	width: 60%;
+	height: 100%;
+}

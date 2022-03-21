@@ -1,3 +1,9 @@
+:root {
+    --dark-color: #290269;
+    --primary: #DBEEF8;
+    --secondary: #3588A7;
+}
+
 .page {
     display: grid;
     grid-template-columns: 200px 1fr 250px;
@@ -25,4 +31,13 @@ aside {
 
 .block-group:first-child {
     grid-column: 1 / -1;
+}
+
+.background-dark {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+.background-primary {
+    background-color: var(--primary);
 }

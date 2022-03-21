@@ -12,6 +12,7 @@ import Oto from "./Pages/Oto";
 // import Base from "./Pages/Base";
 import OtoClassBased from "./Pages/OtoClassBased";
 import NavigationBar from "./NavigationBar";
+import Content from "./Pages/Content";
 import Home from "./Pages/Home";
 import ReactDOM from "react-dom";
 import React from "react";
@@ -25,6 +26,7 @@ const App = () => {
 					<Route path="/" exact element={<Home />} />
 					<Route path="/oto" element={<Oto />} />
 					<Route path="/otoclass" element={<OtoClassBased />} />
+					<Route path="/content" element={<Content/>}/>
 				</Routes>
 			</Router>
 		</>

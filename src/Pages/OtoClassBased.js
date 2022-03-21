@@ -67,59 +67,37 @@ class OtoClassBased extends React.Component {
 		return ethers.utils.formatUnits(value, this.state.tokenDecimal);
 	}
 
-	getLPBalance() {
-		let avaxBalance;
-		let tokenBalance;
-		this.state.wavaxContract.balanceOf(this.state.lpPair).then((res) => {
-			avaxBalance = ethers.utils.formatUnits(res, 18);
-			this.setState((prevState) => ({
-				lpBalance: {
-					...prevState.lpBalance,
-					avax: avaxBalance,
-				},
-			}));
-		});
-		this.state.otoContract.balanceOf(this.state.lpPair).then((res) => {
-			tokenBalance = this.tokenFormatEther(res);
-			this.setState((prevState) => ({
-				lpBalance: {
-					...prevState.lpBalance,
-					token: tokenBalance,
-				},
-			}));
+	async getLPBalance() {
+		const avaxBalance = await this.state.wavaxContract.balanceOf(
+			this.state.lpPair
+		);
+		const tokenBalance = await this.state.otoContract.balanceOf(
+			this.state.lpPair
+		);
+		this.setState({
+			lpBalance: {
+				avax: ethers.utils.formatUnits(avaxBalance, 18),
+				token: this.tokenFormatEther(tokenBalance),
+			},
 		});
 	}
 
-	getTaxReceiverBalances() {
-		let firepitBalance;
-		let vaultBalance;
-		let treasuryBalance;
-		this.state.otoContract.balanceOf(this.state.firepitAddress).then((res) => {
-			firepitBalance = this.tokenFormatEther(res);
-			this.setState((prevState) => ({
-				taxReceiverBalances: {
-					...prevState.taxReceiverBalances,
-					firepit: firepitBalance,
-				},
-			}));
-		});
-		this.state.otoContract.balanceOf(this.state.vaultAddress).then((res) => {
-			vaultBalance = this.tokenFormatEther(res);
-			this.setState((prevState) => ({
-				taxReceiverBalances: {
-					...prevState.taxReceiverBalances,
-					vault: vaultBalance,
-				},
-			}));
-		});
-		this.state.otoContract.balanceOf(this.state.treasuryAddress).then((res) => {
-			treasuryBalance = this.tokenFormatEther(res);
-			this.setState((prevState) => ({
-				taxReceiverBalances: {
-					...prevState.taxReceiverBalances,
-					treasury: treasuryBalance,
-				},
-			}));
+	async getTaxReceiverBalances() {
+		const firepitBalance = await this.state.otoContract.balanceOf(
+			this.state.firepitAddress
+		);
+		const vaultBalance = await this.state.otoContract.balanceOf(
+			this.state.vaultAddress
+		);
+		const treasuryBalance = await this.state.otoContract.balanceOf(
+			this.state.treasuryAddress
+		);
+		this.setState({
+			taxReceiverBalances: {
+				firepit: this.tokenFormatEther(firepitBalance),
+				vault: this.tokenFormatEther(vaultBalance),
+				treasury: this.tokenFormatEther(treasuryBalance),
+			},
 		});
 	}
 
@@ -139,20 +117,19 @@ class OtoClassBased extends React.Component {
 		}
 	}
 
-	getTotalSupply() {
+	async getTotalSupply() {
 		let totalSupply;
 		let firepitSupply = this.state.taxReceiverBalances.firepit;
 		let firepitPercentage;
-		this.state.otoContract._totalSupply().then((res) => {
-			totalSupply = ethers.utils.formatUnits(res, this.state.tokenDecimal);
-			firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(2);
-			this.setState({
-				tokenSupply: {
-					totalSupply: totalSupply,
-					circulatingSupply: totalSupply - firepitSupply,
-					firepitPercentage: firepitPercentage,
-				},
-			});
+		const response = await this.state.otoContract._totalSupply();
+		totalSupply = this.tokenFormatEther(response);
+		firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(2);
+		this.setState({
+			tokenSupply: {
+				totalSupply: totalSupply,
+				circulatingSupply: totalSupply - firepitSupply,
+				firepitPercentage: firepitPercentage,
+			},
 		});
 	}
 
@@ -178,21 +155,21 @@ class OtoClassBased extends React.Component {
 
 	calculateCompoundingRate(amount, rebaseTimes, rate) {
 		for (var i = 0; i < rebaseTimes; i++) {
-			amount += (amount * rate);
+			amount += amount * rate;
 		}
 		return amount;
 	}
 
-	componentDidMount() {
-		Axios.get("https://api.coinstats.app/public/v1/coins/avalanche-2").then(
-			(response) => {
-				this.setState({ avaxPrice: response.data.coin.price });
-			}
-		);
-		this.getLPBalance();
-		this.getTotalSupply();
-		this.getTaxReceiverBalances();
-		// this.getTokenPrice();
+	async componentDidMount() {
+		await Axios.get(
+			"https://api.coinstats.app/public/v1/coins/avalanche-2"
+		).then((response) => {
+			this.setState({ avaxPrice: response.data.coin.price });
+		});
+		await this.getLPBalance();
+		await this.getTotalSupply();
+		await this.getTaxReceiverBalances();
+		await this.getTokenPrice();
 	}
 
 	render() {
