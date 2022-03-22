@@ -58,6 +58,8 @@ class OtoClassBased extends React.Component {
 				avax: null,
 				token: null,
 			},
+			signerAddy: "",
+			signerBalance: 0,
 		};
 
 		this.handleCalculateChange = this.handleCalculateChange.bind(this);
@@ -143,8 +145,8 @@ class OtoClassBased extends React.Component {
 		let days = event.target.value;
 		this.setState({ value: days });
 		const rebaseTimesPerDay = 96;
-		const rebaseRate = 0.02355 / 100; // 0.02355 or 0.02362 depende kay boss KEK
-		const tokenAmount = 1;
+		const rebaseRate = 0.02355 / 100;
+		const tokenAmount = 1; //dynamic from another input field
 		let amountOfToken = this.calculateCompoundingRate(
 			tokenAmount,
 			rebaseTimesPerDay * days,
@@ -172,9 +174,45 @@ class OtoClassBased extends React.Component {
 		await this.getTokenPrice();
 	}
 
+	connectWallet = async () => {
+		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+		await provider.send("eth_requestAccounts", []);
+		let signer = await provider.getSigner();
+		if (!this.state.signerAddy) {
+			signer.signMessage("Connect Wallet to OTO");
+		}
+		let signerAddy = await signer.getAddress();
+		this.setState({ signerAddy: signerAddy });
+		//HIDE Connect wallet button once signerAddy has value
+	};
+
+	getSignerBalance = async () => {
+		if (!this.state.signerAddy) {
+			await this.connectWallet();
+		} else {
+			const balancePromise = await this.state.otoContract.balanceOf(
+				this.state.signerAddy
+			);
+			const balance = this.tokenFormatEther(balancePromise);
+			this.setState({ signerBalance: balance });
+		}
+	};
+
 	render() {
 		return (
 			<div className="ui cards">
+				<CardDetail>
+					<button className="ui basic button" onClick={this.connectWallet}>
+						<i className="money bill alternate user"></i>
+						Connect Wallet
+					</button>
+				</CardDetail>
+				<CardDetail result={this.state.signerBalance}>
+					<button className="ui basic button" onClick={this.getSignerBalance}>
+						<i className="money bill alternate user"></i>
+						Get Balance
+					</button>
+				</CardDetail>
 				<CardDetail header="Avax Price" desc={this.state.avaxPrice} />
 				<CardDetail header="OTO Price" desc={this.state.otoPrice} />
 				<CardDetail
