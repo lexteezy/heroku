@@ -125,6 +125,7 @@ class OtoClassBased extends React.Component {
 		let firepitPercentage;
 		const response = await this.state.otoContract._totalSupply();
 		totalSupply = this.tokenFormatEther(response);
+		console.log('firepitSupply', firepitSupply);
 		firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(2);
 		this.setState({
 			tokenSupply: {
@@ -169,8 +170,8 @@ class OtoClassBased extends React.Component {
 			this.setState({ avaxPrice: response.data.coin.price });
 		});
 		await this.getLPBalance();
-		await this.getTotalSupply();
 		await this.getTaxReceiverBalances();
+		await this.getTotalSupply();
 		await this.getTokenPrice();
 	}
 
