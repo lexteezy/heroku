@@ -69,6 +69,10 @@ class OtoClassBased extends React.Component {
 		return ethers.utils.formatUnits(value, this.state.tokenDecimal);
 	}
 
+	wavaxFormatEther(value) {
+		return ethers.utils.formatUnits(value, 18);
+	}
+
 	async getLPBalance() {
 		const avaxBalance = await this.state.wavaxContract.balanceOf(
 			this.state.lpPair
@@ -88,17 +92,18 @@ class OtoClassBased extends React.Component {
 		const firepitBalance = await this.state.otoContract.balanceOf(
 			this.state.firepitAddress
 		);
-		const vaultBalance = await this.state.otoContract.balanceOf(
+		const vaultBalance = await this.state.wavaxContract.balanceOf(
 			this.state.vaultAddress
 		);
-		const treasuryBalance = await this.state.otoContract.balanceOf(
+		console.log('vaultBlaance', vaultBalance);
+		const treasuryBalance = await this.state.wavaxContract.balanceOf(
 			this.state.treasuryAddress
 		);
 		this.setState({
 			taxReceiverBalances: {
 				firepit: this.tokenFormatEther(firepitBalance),
-				vault: this.tokenFormatEther(vaultBalance),
-				treasury: this.tokenFormatEther(treasuryBalance),
+				vault: this.wavaxFormatEther(vaultBalance),
+				treasury: this.wavaxFormatEther(treasuryBalance),
 			},
 		});
 	}
@@ -118,7 +123,6 @@ class OtoClassBased extends React.Component {
 			return 0;
 		}
 	}
-
 	async getTotalSupply() {
 		let totalSupply;
 		let firepitSupply = this.state.taxReceiverBalances.firepit;
@@ -147,7 +151,7 @@ class OtoClassBased extends React.Component {
 		this.setState({ value: days });
 		const rebaseTimesPerDay = 96;
 		const rebaseRate = 0.02355 / 100;
-		const tokenAmount = 1; //dynamic from another input field
+		const tokenAmount = 1080; //dynamic from another input field
 		let amountOfToken = this.calculateCompoundingRate(
 			tokenAmount,
 			rebaseTimesPerDay * days,
@@ -173,6 +177,8 @@ class OtoClassBased extends React.Component {
 		await this.getTaxReceiverBalances();
 		await this.getTotalSupply();
 		await this.getTokenPrice();
+
+		console.log(this.state.taxReceiverBalances);
 	}
 
 	connectWallet = async () => {
