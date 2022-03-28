@@ -148,7 +148,7 @@ class OtoClassBased extends React.Component {
 	}
 
 	getSecondsPastLastRebased() {
-		const currentTime = parseInt(Date.now().toString().slice(0,-3));
+		const currentTime = parseInt(Date.now().toString().slice(0,-3)); //we spliced last 3 digit to remove miliseconds
 
 		const difference = (currentTime - this.state.initRebasedTime); //900 because 60 * 15. 
 		console.log('difference', difference);
