@@ -79,17 +79,24 @@ class RebaseAgg extends React.Component {
 		await provider.send("eth_requestAccounts", []);
 		return await provider.getSigner();
     }
-
+    //assign to button
     async claimPendingRewards() {
 		let signer = this.procMetamask();
 		signer.signMessage("Claim Pending Rewards!");
         await this.state.reactContract.claimPendingRewards();
     }
-
+    //assign to button
     async compoundDividends() {
 		let signer = this.procMetamask();
-		signer.signMessage("Claim Pending Rewards!");
+		signer.signMessage("Compound Dividend!");
         await this.state.reactContract.compoundDividends();
+    }
+
+    async lockTokens(amount, days) {
+        const daysInSeconds = days * 86400; //86400 seconds per day
+        let signer = this.procMetamask();
+		signer.signMessage("Lock Tokens");
+        await this.state.reactContract.lockInitialTokens(amount, daysInSeconds);
     }
     
 
