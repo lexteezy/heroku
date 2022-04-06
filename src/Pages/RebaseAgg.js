@@ -98,6 +98,13 @@ class RebaseAgg extends React.Component {
 		signer.signMessage("Lock Tokens");
         await this.state.reactContract.lockInitialTokens(amount, daysInSeconds);
     }
+
+    async getRemainingTokenLockTime(address) {
+        const seconds = this.state.reactContract.getRemainingTokenLockTime(address);
+        if(seconds > 86400) {
+            const daysInSeconds = seconds / 86400;
+        }
+    }
     
 
 
