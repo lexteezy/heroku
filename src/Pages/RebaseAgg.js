@@ -17,6 +17,9 @@ class RebaseAgg extends React.Component {
 			reactAbi,
 			avaxProvider
 		);
+		
+		//get lpPairAddy from 
+		const lpPair = "";
 
 		this.state = {
 			reactContract: reactContract,
@@ -26,7 +29,26 @@ class RebaseAgg extends React.Component {
 			totalRewardsDistributed: 0,
             userRealizedGains: 0,
             pendingRewards: 0,
+			lpBalance: {
+				avax: 0,
+				token: 0
+			},
+			lpPair: lpPair,
+			avaxPrice: 0,
+			circulatingMarketCap: 0,
+			reactPrice: 0,
+			totalSupply: 0, 
+			marketCap: 0
+
 		};
+	}
+
+	componentDidMount() {
+		await Axios.get(
+			"https://api.coinstats.app/public/v1/coins/avalanche-2"
+		).then((response) => {
+			this.setState({ avaxPrice: response.data.coin.price });
+		});
 	}
 
 	tokenFormatEther(value) {
@@ -38,13 +60,12 @@ class RebaseAgg extends React.Component {
 		await provider.send("eth_requestAccounts", []);
 		let signer = await provider.getSigner();
 		if (!this.state.signerAddress) {
-			signer.signMessage("Connect Wallet to OTO");
+			signer.signMessage("Connect Wallet to React");
 		}
 		let signerAddress = signer.getAddress();
 		let signerBalance = this.getAccountBalance(signerAddress);
 		this.setState({ signerAddress: signerAddress });
 		this.setState({ signerBalance: signerBalance });
-		//HIDE Connect wallet button once signerAddy has value
 	};
 
     //usable for other addy not just signer
@@ -55,6 +76,45 @@ class RebaseAgg extends React.Component {
 		const balance = await this.state.reactContract.balanceOf(address);
 		return this.tokenFormatEther(balance);
 	}
+	
+	async getLPBalance() {
+		const avaxBalance = await this.state.wavaxContract.balanceOf(
+			this.state.lpPair
+		);
+		const tokenBalance = await this.state.reactContract.balanceOf(
+			this.state.lpPair
+		);
+		this.setState({
+			lpBalance: {
+				avax: ethers.utils.formatUnits(avaxBalance, 18),
+				token: this.tokenFormatEther(tokenBalance),
+			},
+		});
+	}
+
+	getTokenPrice() {
+		if (
+			this.state.lpBalance.avax &&
+			this.state.lpBalance.token &&
+			this.state.avaxPrice
+		) {
+			const avaxBalanceInUsd = this.state.lpBalance.avax * this.state.avaxPrice;
+			const tokenPrice = (
+				avaxBalanceInUsd / this.state.lpBalance.token
+			).toFixed(this.state.tokenDecimal);
+			this.setState({ reactPrice: tokenPrice });
+		} else {
+			return 0;
+		}
+	}
+
+	async getMarketCap() {
+		let totalSupply = await this.state.reactContract.totalSupply(); 
+		this.state.setState({totalSupply : totalSupply});
+		let marketCap = totalSupply * reactPrice;
+		this.setState({marketCap: marketCap});
+	}
+
 
 	async getTotalRewardsDistributed() {
 		const reward = await this.state.reactContract.getTotalReflected();
