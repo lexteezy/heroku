@@ -17,11 +17,17 @@ class RebaseAgg extends React.Component {
 			reactAbi,
 			avaxProvider
 		);
+		const wavaxContract = new ethers.Contract(
+			"0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+			wavaxAbi,
+			avaxProvider
+		);
 		
 		const lpPair = "0x580436ecaba01815711aa4a191c4405c73ddf829";
 
 		this.state = {
 			reactContract: reactContract,
+			wavaxContract: wavaxContract,
 			signerAddress: "",
 			signerBalance: 0,
 			tokenDecimal: 18,
@@ -89,6 +95,10 @@ class RebaseAgg extends React.Component {
 				token: this.tokenFormatEther(tokenBalance),
 			},
 		});
+	}
+
+	wavaxFormatEther(value) {
+		return ethers.utils.formatUnits(value, 18);
 	}
 
 	getTokenPrice() {
