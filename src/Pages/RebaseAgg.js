@@ -13,13 +13,12 @@ class RebaseAgg extends React.Component {
 		);
 
 		const reactContract = new ethers.Contract(
-			"0x6CFf95758cBB781Bd767490a21BA998304febF07",
+			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
 			reactAbi,
 			avaxProvider
 		);
 		
-		//get lpPairAddy from 
-		const lpPair = "";
+		const lpPair = "0x580436ecaba01815711aa4a191c4405c73ddf829";
 
 		this.state = {
 			reactContract: reactContract,
