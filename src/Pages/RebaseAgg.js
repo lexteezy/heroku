@@ -145,6 +145,30 @@ class RebaseAgg extends React.Component {
         this.setState({ pendingRewards: simplified});
     }
 
+	async temporaryClaim() {
+		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+		await provider.send("eth_requestAccounts", []);
+		const signer = await provider.getSigner();
+		const react = new ethers.Contract(
+			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
+			reactAbi,
+			signer
+		);
+		await react.claimPendingRewards();
+	}
+
+	async temporaryCompound() {
+		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+		await provider.send("eth_requestAccounts", []);
+		const signer = await provider.getSigner();
+		const react = new ethers.Contract(
+			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
+			reactAbi,
+			signer
+		);
+		await react.compoundDividends();
+	}
+
     //assign to button
     async claimPendingRewards() {
 		this.state.signer.signMessage("Claim Pending Rewards!");
