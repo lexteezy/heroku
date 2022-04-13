@@ -28,6 +28,7 @@ class RebaseAgg extends React.Component {
 		this.state = {
 			reactContract: reactContract,
 			wavaxContract: wavaxContract,
+			signer: null,
 			signerAddress: "",
 			signerBalance: 0,
 			tokenDecimal: 18,
@@ -71,6 +72,7 @@ class RebaseAgg extends React.Component {
 		let signerBalance = this.getAccountBalance(signerAddress);
 		this.setState({ signerAddress: signerAddress });
 		this.setState({ signerBalance: signerBalance });
+		this.setState({ signer: signer});
 	};
 
     //usable for other addy not just signer
@@ -97,7 +99,7 @@ class RebaseAgg extends React.Component {
 		});
 	}
 
-	wavaxFormatEther(value) {
+	formatEther(value) {
 		return ethers.utils.formatUnits(value, 18);
 	}
 
@@ -143,28 +145,20 @@ class RebaseAgg extends React.Component {
         this.setState({ pendingRewards: simplified});
     }
 
-    async procMetamask() {
-		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-		await provider.send("eth_requestAccounts", []);
-		return await provider.getSigner();
-    }
     //assign to button
     async claimPendingRewards() {
-		let signer = this.procMetamask();
-		signer.signMessage("Claim Pending Rewards!");
+		this.state.signer.signMessage("Claim Pending Rewards!");
         await this.state.reactContract.claimPendingRewards();
     }
     //assign to button
     async compoundDividends() {
-		let signer = this.procMetamask();
-		signer.signMessage("Compound Dividend!");
+		this.state.signer.signMessage("Compound Dividend!");
         await this.state.reactContract.compoundDividends();
     }
 
     async lockTokens(amount, days) {
         const daysInSeconds = days * 86400; //86400 seconds per day
-        let signer = this.procMetamask();
-		signer.signMessage("Lock Tokens");
+		this.state.signer.signMessage("Lock Tokens");
         await this.state.reactContract.lockInitialTokens(amount, daysInSeconds);
     }
 
