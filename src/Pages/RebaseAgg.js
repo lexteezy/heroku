@@ -117,8 +117,8 @@ class RebaseAgg extends React.Component {
 
 	async getTreasuryBalance() {
 		const sphereBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
-		const safuuBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
-		const titanoBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
+		const safuuBalance = await this.state.safuuContract.balanceOf(this.state.rebaseTreasuryAddy);
+		const titanoBalance = await this.state.titanoContract.balanceOf(this.state.rebaseTreasuryAddy);
 
 		this.setState({sphereBalance:this.tokenFormatEther(sphereBalance, this.state.sphereDecimal)});
 		this.setState({safuuBalance:this.tokenFormatEther(safuuBalance, this.state.safuuDecimal)});
