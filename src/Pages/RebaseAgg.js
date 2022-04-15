@@ -199,6 +199,10 @@ class RebaseAgg extends React.Component {
 		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 		await provider.send("eth_requestAccounts", []);
 		const signer = await provider.getSigner();
+		const network = await provider.getNetwork();
+		if(network.chainId != 43114) {
+			//pop up error not in correct network
+		} //else continue
 		const react = new ethers.Contract(
 			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
 			reactAbi,
@@ -211,6 +215,10 @@ class RebaseAgg extends React.Component {
 		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 		await provider.send("eth_requestAccounts", []);
 		const signer = await provider.getSigner();
+		const network = await provider.getNetwork();
+		if(network.chainId != 43114) {
+			//pop up error not in correct network
+		} //else continue
 		const react = new ethers.Contract(
 			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
 			reactAbi,
