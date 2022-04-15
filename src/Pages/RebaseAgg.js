@@ -3,6 +3,7 @@ import reactAbi from "../rebaseAggregatorAbi.json";
 import { ethers } from "ethers";
 import Axios from "axios";
 import wavaxAbi from "../wavaxAbi.json";
+import defaultErc20Abi from "../ABI/defaultErc20Abi.json";
 
 class RebaseAgg extends React.Component {
 	constructor(props) {
@@ -10,6 +11,32 @@ class RebaseAgg extends React.Component {
 
 		const avaxProvider = new ethers.providers.getDefaultProvider(
 			"https://api.avax.network/ext/bc/C/rpc"
+		);
+
+		const bscProvider = new ethers.providers.getDefaultProvider(
+			"https://bsc-dataseed3.ninicoin.io/"
+		);
+
+		const maticProvider = new ethers.providers.getDefaultProvider(
+			"https://matic-mainnet.chainstacklabs.com/"
+		);
+
+		const safuuContract = new ethers.Contract(
+			"0xE5bA47fD94CB645ba4119222e34fB33F59C7CD90",
+			defaultErc20Abi,
+			bscProvider
+		);
+
+		const titanoContract = new ethers.Contract(
+			"0xBA96731324dE188ebC1eD87ca74544dDEbC07D7f",
+			defaultErc20Abi,
+			bscProvider
+		);
+
+		const sphereContract = new ethers.Contract(
+			"0x8D546026012bF75073d8A586f24A5d5ff75b9716",
+			defaultErc20Abi,
+			maticProvider
 		);
 
 		const reactContract = new ethers.Contract(
@@ -28,10 +55,17 @@ class RebaseAgg extends React.Component {
 		this.state = {
 			reactContract: reactContract,
 			wavaxContract: wavaxContract,
+			safuuContract,
+			sphereContract,
+			titanoContract,
+			rebaseTreasuryAddy: "0xcFc2cd0A95b1c6aA1CBd3c296e53007Eabd36CBC",
 			signer: null,
 			signerAddress: "",
 			signerBalance: 0,
 			tokenDecimal: 18,
+			safuuDecimal: 5,
+			titanoDecimal: 18,
+			sphereDecimal: 18,
 			totalRewardsDistributed: 0,
             userRealizedGains: 0,
             pendingRewards: 0,
@@ -44,8 +78,10 @@ class RebaseAgg extends React.Component {
 			circulatingMarketCap: 0,
 			reactPrice: 0,
 			totalSupply: 0, 
-			marketCap: 0
-
+			marketCap: 0,
+			sphereBalance: 0,
+			safuuBalance: 0,
+			titanoBalance: 0
 		};
 	}
 
@@ -61,6 +97,10 @@ class RebaseAgg extends React.Component {
 		return ethers.utils.formatUnits(value, this.state.tokenDecimal);
 	}
 
+	tokenFormatEther(value, decimal) {
+		return ethers.utils.formatUnits(value, decimal);
+	}
+
 	connectWallet = async () => {
 		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 		await provider.send("eth_requestAccounts", []);
@@ -74,6 +114,16 @@ class RebaseAgg extends React.Component {
 		this.setState({ signerBalance: signerBalance });
 		this.setState({ signer: signer});
 	};
+
+	async getTreasuryBalance() {
+		const sphereBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
+		const safuuBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
+		const titanoBalance = await this.state.sphereContract.balanceOf(this.state.rebaseTreasuryAddy);
+
+		this.setState({sphereBalance:this.tokenFormatEther(sphereBalance, this.state.sphereDecimal)});
+		this.setState({safuuBalance:this.tokenFormatEther(safuuBalance, this.state.safuuDecimal)});
+		this.setState({titanoBalance:this.tokenFormatEther(titanoBalance, this.state.titanoDecimal)});
+	}
 
     //usable for other addy not just signer
 	async getAccountBalance(address) {
