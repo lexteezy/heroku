@@ -81,7 +81,10 @@ class RebaseAgg extends React.Component {
 			marketCap: 0,
 			sphereBalance: 0,
 			safuuBalance: 0,
-			titanoBalance: 0
+			titanoBalance: 0,
+			spherePrice: 0,
+			safuuPrice: 0,
+			titanoPrice: 0
 		};
 	}
 
@@ -90,6 +93,27 @@ class RebaseAgg extends React.Component {
 			"https://api.coinstats.app/public/v1/coins/avalanche-2"
 		).then((response) => {
 			this.setState({ avaxPrice: response.data.coin.price });
+		});
+		let one = "https://api.coingecko.com/api/v3/simple/price?ids=sphere-finance&vs_currencies=USD";
+		let two = "https://api.coingecko.com/api/v3/simple/price?ids=titano&vs_currencies=USD";
+		let three = "https://api.coingecko.com/api/v3/simple/price?ids=safuu&vs_currencies=USD";
+
+		const reqOne= Axios.get(one);
+		const reqTwo= Axios.get(two);
+		const reqThree= Axios.get(three);
+		Axios.all([reqOne,reqTwo,reqThree]).then((...responses) => {
+			console.log('responses',responses[0]);
+			const respOne = responses[0][0];
+			const respTwo = responses[0][1];
+			const respThree = responses[0][2];
+			
+			const spherePrice = respOne.data['sphere-finance'].usd;
+			const titanoPrice = respTwo.data.titano.usd;
+			const safuuPrice = respThree.data.safuu.usd;
+			
+			this.setState({ spherePrice: spherePrice });
+			this.setState({ safuuPrice: titanoPrice });
+			this.setState({ titanoPrice: safuuPrice });
 		});
 	}
 
