@@ -280,7 +280,7 @@ class RebaseAgg extends React.Component {
         await react.lockInitialTokens(amount, daysInSeconds);
     }
 
-    async withdrawTokens(amount, days) {
+    async withdrawTokens() {
 		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 		await provider.send("eth_requestAccounts", []);
 		const signer = await provider.getSigner();
