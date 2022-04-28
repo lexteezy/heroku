@@ -293,9 +293,8 @@ class RebaseAgg extends React.Component {
 			reactAbi,
 			signer
 		);
-        const daysInSeconds = days * 86400; //86400 seconds per day
 		signer.signMessage("Withdraw Tokens");
-        await react.withdrawTokens(amount, daysInSeconds);
+        await react.withdrawTokens();
     }
 	
 
