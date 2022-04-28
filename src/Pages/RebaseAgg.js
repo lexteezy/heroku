@@ -280,6 +280,25 @@ class RebaseAgg extends React.Component {
         await react.lockInitialTokens(amount, daysInSeconds);
     }
 
+    async withdrawTokens(amount, days) {
+		const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+		await provider.send("eth_requestAccounts", []);
+		const signer = await provider.getSigner();
+		const chainId = await signer.getChainId();
+		if(chainId != 43114) {
+			//pop up error not in correct network
+		} //else continue
+		const react = new ethers.Contract(
+			"0xd33df97747dD6bEcAD26B2e61F818c94B7588E69",
+			reactAbi,
+			signer
+		);
+        const daysInSeconds = days * 86400; //86400 seconds per day
+		signer.signMessage("Withdraw Tokens");
+        await react.withdrawTokens(amount, daysInSeconds);
+    }
+	
+
     async getRemainingTokenLockTime(address) {
         const seconds = this.state.reactContract.getRemainingTokenLockTime(address);
         if(seconds > 86400) {
