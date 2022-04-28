@@ -286,6 +286,15 @@ class RebaseAgg extends React.Component {
             const daysInSeconds = seconds / 86400;
         }
     }
+
+	async getLockedTokenAmount() {
+		this.getLockedTokenAmount(this.state.signerAddress);
+	}
+	
+	async getLockedTokenAmount (address) {
+		const lockedTokens = await this.state.reactContract.getLockedTokenAmount(address);
+		const formated = this.tokenFormatEther(lockedTokens);
+	}
     
 
 
